@@ -18,6 +18,7 @@
 # define MIN(a, b) (a < b) ? a : b
 # define TR (my_union)->transform
 # define SQR(x) x * x
+# define ABS(x) x >= 0 ? x : (x * -1)
 # define UPTR (*my_union)
 # include "/usr/local/include/mlx.h"
 # include <math.h>
@@ -26,7 +27,7 @@
 # include <stdlib.h>
 # include <string.h>
 # include <pthread.h>
-# define NUM_OF_THR 4
+# define NUM_OF_THR 200
 
 typedef struct	s_union
 {
@@ -74,6 +75,8 @@ typedef struct	s_thread
 	t_union *my_union;
 }				t_thread;
 
+void            octo(t_union *my_union, int x, int y);
+void            ship(t_union *my_union, int x, int y);
 void            put_cross(t_union *my_union);
 void            newton(t_union *my_union, int x, int y);
 void        	mandelbrot(t_union *my_union, int x, int y);

@@ -41,8 +41,8 @@ int		mouse_move(int x, int y, t_union *my_union)
 {
 	if (my_union->mode == 'f')
 	{
-        my_union->cur_real = map_func(x, 0, my_union->win_x, -2, 2);
-        my_union->cur_imag = map_func(y, 0, my_union->win_y, -2, 2);
+        my_union->cur_real = map_func(x, 0, my_union->win_x, -2.5, 1);
+        my_union->cur_imag = map_func(y, 0, my_union->win_y, -2.5, 1);
 		plot(my_union);
 	}
 }

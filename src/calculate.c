@@ -28,11 +28,18 @@ void	*draw_image(void *my_thread)
 		x = -1;
 		while (++x < my_union->win_x)
 		{
-			if (my_union->mode == 'j' || my_union->mode == 'f')
+		    if (my_union->mode == 's')
+                ship(my_union, x, y);
+			else if (my_union->mode == 'j' || my_union->mode == 'f')
 				julia(my_union, x, y);
-			if (my_union->mode == 'm')
+            else if (my_union->mode == 'o')
+		    {
+			    my_union->old = 1;
+			    octo(my_union, x, y);
+		    }
+			else if (my_union->mode == 'm')
 				mandelbrot(my_union, x, y);
-			if (my_union->mode == 'n')
+			else if (my_union->mode == 'n')
 			{
 				my_union->old = 1;
 				newton(my_union, x, y);
@@ -65,9 +72,13 @@ void	plot(t_union *my_union)
 			ft_putchar('\n');
 		}
 	}
+    i = -1;
+    while (++i < NUM_OF_THR)
+        pthread_join(thread[i], NULL);
+
 	put_cross(my_union);
-	mlx_put_image_to_window(my_union->mlx_ptr,
-							my_union->win_ptr, my_union->image_ptr, 0, 0);
+		mlx_put_image_to_window(my_union->mlx_ptr,
+				my_union->win_ptr, my_union->image_ptr, 0, 0);
 	mlx_string_put(my_union->mlx_ptr,
 				   my_union->win_ptr, 20, 40, 0x000000, ft_itoa((int)my_union->scale));
 	mlx_string_put(my_union->mlx_ptr,
@@ -125,26 +136,88 @@ void    put_cross(t_union *my_union)
     }
 }
 
+void    ship(t_union *my_union, int x, int y)
+{
+    double dub;
+    double temp_real;
+    double temp_imag;
+    double new_real;
+    double temp_x;
+    double temp_y;
+    double new_imag;
+    int n;
+
+    new_real = (x - my_union->half_win_x) * (1 / my_union->var_x) + my_union->shift_x;
+    new_imag = (y - my_union->half_win_y) * (1 / my_union->var_y) + my_union->shift_y;
+    temp_x = new_real;
+    temp_y = new_imag;
+    n = -1;
+    while (++n < my_union->max_iter)
+    {
+        temp_real = SQR(new_real) - SQR(new_imag) + temp_x;
+        new_imag = fabs(2 * new_real * new_imag) + temp_y;
+        new_real = fabs(temp_real);
+        if (SQR(new_real) + SQR(new_imag) > 4)
+            break;
+    }
+//			dub = n + 1 - (log(2) / (sqrt(SQR(new_real) + SQR(new_imag)))) / log(2);
+    set_pixel(my_union, y, x, n);
+}
+
 void    newton(t_union *my_union, int x, int y)
 {
     double cur_real;
     double cur_imag;
     double new_real;
     double new_imag;
+    double sqr_real;
+    double sqr_imag;
     double dub;
     int n;
 
     cur_real = (x - my_union->half_win_x) / my_union->var_x + my_union->shift_x;
     cur_imag = (y - my_union->half_win_y) / my_union->var_y + my_union->shift_y;
     n = -1;
-    while (++n < my_union->max_iter && my_union->old > 0.000001)
+    while (++n < my_union->max_iter && my_union->old > 0.5)
     {
         new_real = cur_real;
         new_imag = cur_imag;
-		my_union->old = ft_powd(SQR(cur_real) + SQR(cur_imag), 2);
-        cur_real = (2 * new_real * my_union->old + SQR(cur_real) - SQR(cur_imag)) / (3 * my_union->old);
+        sqr_real = SQR(cur_real);
+        sqr_imag = SQR(cur_imag);
+        my_union->old = (sqr_real + sqr_imag) * (sqr_real + sqr_imag);
+        cur_real = (2 * new_real * my_union->old + sqr_real - sqr_imag) / (3 * my_union->old);
         cur_imag = 2 * cur_imag * (my_union->old - new_real) / (3 * my_union->old);
-		my_union->old = ft_powd(cur_real - new_real, 2) + ft_powd(cur_imag - new_imag, 2);
+        my_union->old = (cur_real - new_real) * (cur_real - new_real) + (cur_imag - new_imag) * (cur_imag - new_imag);
+    }
+//            dub = n + 1 - (log(2) / (sqrt(SQR(new_real) + SQR(new_imag)))) / log(2);
+    set_pixel(my_union, y, x, n);
+
+}
+
+void    octo(t_union *my_union, int x, int y)
+{
+    double cur_real;
+    double cur_imag;
+    double new_real;
+    double new_imag;
+    double sqr_real;
+    double sqr_imag;
+    double dub;
+    int n;
+
+    cur_real = (x - my_union->half_win_x) / my_union->var_x + my_union->shift_x;
+    cur_imag = (y - my_union->half_win_y) / my_union->var_y + my_union->shift_y;
+    n = -1;
+    while (++n < my_union->max_iter && my_union->old > 0.5)
+    {
+        new_real = cur_real;
+        new_imag = cur_imag;
+        sqr_real = SQR(cur_real);
+        sqr_imag = SQR(cur_imag);
+		my_union->old = (sqr_real + sqr_imag) * (sqr_real + sqr_imag);
+        cur_real = (2 * new_real * my_union->old + sqr_real - sqr_imag) / (3 * my_union->old);
+        cur_imag = 2 * cur_imag * (my_union->old - new_real) / (3 * my_union->old);
+		my_union->old = (cur_real - new_real) * (cur_real - new_real) + (cur_imag - new_imag) * (cur_imag - new_imag);
     }
 //            dub = n + 1 - (log(2) / (sqrt(SQR(new_real) + SQR(new_imag)))) / log(2);
     set_pixel(my_union, y, x, n);

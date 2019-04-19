@@ -24,6 +24,10 @@ int		main(int argc, char **argv)
             my_union.mode = 'm';
         else if (ft_strequ(argv[1], "newton"))
             my_union.mode = 'n';
+        else if (ft_strequ(argv[1], "ship"))
+            my_union.mode = 's';
+        else if (ft_strequ(argv[1], "octo"))
+            my_union.mode = 'o';
 		else
 		{
 			ft_putstr("usage: ./fractol [mandelbrot/julia]\n");

@@ -23,7 +23,7 @@ void	struct_initial(t_union *my_union)
         my_union->zoom_num = 50;
         my_union->half_win_x = my_union->win_x * 0.5;
         my_union->half_win_y = my_union->win_y * 0.5;
-        my_union->max_iter = 50;
+        my_union->max_iter = 200;
         my_union->cur_real = -0.7;
         my_union->cur_imag = 0.27015;
         my_union->mlx_ptr = mlx_init();
@@ -34,8 +34,8 @@ void	struct_initial(t_union *my_union)
 
 void	image_init(t_union *my_union)
 {
-    my_union->image_ptr = mlx_new_image(my_union->mlx_ptr,
-            my_union->win_x, my_union->win_y);
-    my_union->image_data = mlx_get_data_addr(my_union->image_ptr,
-			&(my_union->bpp), &(my_union->sl), &(my_union->endian));
+		my_union->image_ptr = mlx_new_image(my_union->mlx_ptr,
+		                                    my_union->win_x, my_union->win_y);
+		my_union->image_data = mlx_get_data_addr(my_union->image_ptr,
+		                                         &(my_union->bpp), &(my_union->sl), &(my_union->endian));
 }
