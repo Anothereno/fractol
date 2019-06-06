@@ -26,26 +26,26 @@ norm:
 	norminette -R CheckForbiddenSourceHeader
 
 comp:
-	gcc -g -Wall -Wextra -Werror -o a.exe *.c -I libft.h
-	./a.exe
-	rm -r a.*
+	@gcc -g -Wall -Wextra -Werror -o a.exe *.c -I libft.h
+	@./a.exe
+	@rm -r a.*
 
 so :
-	gcc -g -fPIC -Wall -Werror -Wextra *.c -shared -o libft.so
+	@gcc -g -fPIC -Wall -Werror -Wextra *.c -shared -o libft.so
 
 sorem:
-	rm -r *.so*
-	rm -r *.o
+	@rm -r *.so*
+	@rm -r *.o
 
 rem:
-	rm -r a.*
+	@rm -r a.*
 
 debug:
-	gcc -g -Wall -Wextra -Werror -o a.exe *.c -I libft.h
+	@gcc -g -Wall -Wextra -Werror -o a.exe *.c -I libft.h
 clean:
-	rm -f $(OBJ)
+	@rm -f $(OBJ)
 
 fclean: clean
-	rm -f $(NAME)
+	@rm -f $(NAME)
 
 re: fclean all

@@ -6,56 +6,63 @@
 #    By: hdwarven <hdwarven@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/04/09 17:56:15 by hdwarven          #+#    #+#              #
-#    Updated: 2019/04/09 18:11:15 by hdwarven         ###   ########.fr        #
+#    Updated: 2019/06/05 14:13:00 by hdwarven         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	= fractol
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror
+NAME = fractol
+INCLUDES = -I ./libft/includes -I ./includes
 
-SRCDIR	= ./src/
-INCDIR	= ./includes/
-OBJDIR	= ./obj/
+FDF = fractol.fdf
+SRC_PATH = src
+SRC_LIST = fractol.c calculate.c colorize.c input.c keys.c transform.c
+SRC = $(addprefix $(SRC_PATH)/, $(SRC_LIST))
 
-SRC		= fdf.c calculate.c colorize.c input.c isometric.c keys.c plot.c rotates1.c rotates2.c transform.c validation.c
-OBJ		= $(addprefix $(OBJDIR),$(SRC:.c=.o))
+OBJ_LIST = $(SRC_LIST:.c=.o)
+OBJ_PATH = obj
+OBJ = $(addprefix $(OBJ_PATH)/, $(OBJ_LIST))
 
-CC		= gcc
-CFLAGS	= -Wall -Wextra -Werror -g
+LIBFT_PATH = libft
+LIBFT = -L $(LIBFT_PATH) -lft
 
-MLX		= ./minilibx_macos/
-MLX_LIB	= $(addprefix $(MLX),libmlx.a)
-MLX_INC	= -I ./minilibx_macos
-MLX_LNK	= -L ./minilibx_macos -l mlx -framework OpenGL -framework AppKit
+LIBS = -lm -lmlx -framework OpenGl -framework Appkit
 
-FT		= ./libft/
-FT_LIB	= $(addprefix $(FT),libft.a)
-FT_INC	= -I ./libft
-FT_LNK	= -L ./libft -l ft
+YELLOW = \033[1;33m
+PURPLE = \033[0;35m
+NC = \033[0m
 
-all: obj $(FT_LIB) $(MLX_LIB) $(NAME)
+.PHONY: all
 
-obj:
-	mkdir -p $(OBJDIR)
+all: make_libft intro make_obj $(NAME)
+	@echo "$(PURPLE)MAKE $(NAME) Done!$(NC)"
 
-$(OBJDIR)%.o:$(SRCDIR)%.c
-	 $(CC) $(CFLAGS) $(MLX_INC) $(FT_INC) -I $(INCDIR) -o $@ -c $<
-
-$(FT_LIB):
-	make -C $(FT)
-
-$(MLX_LIB):
-	make -C $(MLX)
+intro:
+	@echo "\n$(PURPLE)MAKE $(NAME) Start!$(NC)"
 
 $(NAME): $(OBJ)
-	$(CC) $(OBJ) $(MLX_LNK) $(FT_LNK) -lm -o $(NAME)
+	@$(CC) $(CFLAGS) $(INCLUDES) $(OBJ) -o $(NAME) $(LIBS) -lpthread $(LIBFT)
 
-clean:
-	rm -rf $(OBJDIR)
-	make -C $(FT) clean
-	make -C $(MLX) clean
+$(OBJ_PATH)/%.o: $(SRC_PATH)/%.c
+	@echo "$(YELLOW)$(NAME): $(notdir $<)$(NC)"
+	@$(CC) $(CFLAGS) $(INCLUDES)  -o $@ -c $<
 
-fclean: clean
-	rm -rf $(NAME)
-	make -C $(FT) fclean
+make_obj :
+	@mkdir -p obj
 
-re: fclean all
+make_libft :
+	@make -C ./libft/
+
+clean :
+	@echo "$(YELLOW)Objects Deleted.$(NC)"
+	@/bin/rm -rf $(OBJ_PATH)
+	@if test -f "$(FDF)"; then  /bin/rm -f "$(FDF)"; fi
+
+fclean :	clean
+	@echo "$(YELLOW)$(NAME) Deleted.$(NC)"
+	@/bin/rm -f $(NAME)
+	@echo "$(YELLOW)Lib_obj Deleted.$(NC)"
+	@make -C $(LIBFT_PATH) fclean
+
+re :	fclean all

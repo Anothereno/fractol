@@ -1,16 +1,45 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fdf.c                                              :+:      :+:    :+:   */
+/*   fractol.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hdwarven <hdwarven@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hdwarven <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/02/15 16:31:34 by hdwarven          #+#    #+#             */
-/*   Updated: 2019/04/17 13:53:55 by hdwarven         ###   ########.fr       */
+/*   Created: 2019/05/07 17:23:42 by hdwarven          #+#    #+#             */
+/*   Updated: 2019/06/06 19:14:31 by hdwarven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
+
+int		set_mode(t_union *my_union, char *argv)
+{
+	if (ft_strequ(argv, "julia"))
+	{
+		my_union->mode = 'j';
+		return (1);
+	}
+	else if (ft_strequ(argv, "mandelbrot"))
+	{
+		my_union->mode = 'm';
+		return (1);
+	}
+	else if (ft_strequ(argv, "ship"))
+	{
+		my_union->mode = 's';
+		return (1);
+	}
+	return (0);
+}
+
+void	usage(void)
+{
+	ft_putstr("usage: ./fractol <argument>\n");
+	ft_putstr("\targuments:\n");
+	ft_putstr("\t\tjulia\t\tPrint Julia's fractal\n");
+	ft_putstr("\t\tmandelbrot\tPrint Mandelbrot's fractal\n");
+	ft_putstr("\t\tship\t\tPrint Burning ship fractal\n");
+}
 
 int		main(int argc, char **argv)
 {
@@ -18,30 +47,20 @@ int		main(int argc, char **argv)
 
 	if (argc == 2)
 	{
-		if (ft_strequ(argv[1], "julia"))
-			my_union.mode = 'j';
-		else if (ft_strequ(argv[1], "mandelbrot"))
-            my_union.mode = 'm';
-        else if (ft_strequ(argv[1], "newton"))
-            my_union.mode = 'n';
-        else if (ft_strequ(argv[1], "ship"))
-            my_union.mode = 's';
-        else if (ft_strequ(argv[1], "octo"))
-            my_union.mode = 'o';
-		else
+		if (!set_mode(&my_union, argv[1]))
 		{
-			ft_putstr("usage: ./fractol [mandelbrot/julia]\n");
+			usage();
 			return (0);
 		}
 		struct_initial(&my_union);
 		plot(&my_union);
 		mlx_hook(my_union.win_ptr, 2, 5, deal_key, &my_union);
 		mlx_hook(my_union.win_ptr, 17, 1L >> 17, exit_, &my_union);
-        mlx_hook(my_union.win_ptr, 4, 5, mouse_press, &my_union);
-        mlx_hook(my_union.win_ptr, 6, 5, mouse_move, &my_union);
+		mlx_hook(my_union.win_ptr, 4, 5, mouse_press, &my_union);
+		mlx_hook(my_union.win_ptr, 6, 5, mouse_move, &my_union);
 		mlx_loop(my_union.mlx_ptr);
 	}
 	else
-		ft_putstr("usage: ./fractol [mandelbrot/julia]\n");
+		usage();
 	return (0);
 }

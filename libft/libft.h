@@ -6,7 +6,7 @@
 /*   By: hdwarven <hdwarven@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/21 13:33:18 by hdwarven          #+#    #+#             */
-/*   Updated: 2019/01/02 14:39:11 by hdwarven         ###   ########.fr       */
+/*   Updated: 2019/05/07 16:47:57 by hdwarven         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ typedef struct	s_list
 	struct s_list	*next;
 }				t_list;
 
-double          ft_powd(double x, int y);
+double			ft_powd(double x, int y);
 int				ft_isdigit(int c);
 int				ft_strcmp(const char *s1, const char *s2);
 int				ft_strncmp(const char *s1, const char *s2, size_t n);
